@@ -66,34 +66,46 @@ L'interface a été conçue pour être "Premium" et temps réel :
 
 ---
 
-## 4. Manuel d'Exécution du Projet
+## 4. Guide d'Exécution du Projet (Ancien mode d'emploi)
 
-Assurez-vous d'avoir démarré l'environnement Kafka et MongoDB sur votre machine locale avant de lancer l'application Node.js.
+### 1. Prérequis
+Assurez-vous d'avoir installé localement :
+* [Node.js](https://nodejs.org/) (v16 ou supérieur)
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-### Étape 1 : Démarrer l'infrastructure
-1. Lancer **MongoDB** (sur le port 27017 par défaut).
-2. Lancer **Zookeeper** (port 2181) puis **Kafka** (port 9092).
-
-### Étape 2 : Lancer l'Ingestion (Producteurs & Consommateurs)
-Ouvrez plusieurs terminaux distincts :
+### 2. Démarrage de l'Infrastructure (Docker)
+Démarrez les services Kafka, Zookeeper, Confluent Control Center et MongoDB en arrière-plan :
 ```bash
-# Terminal 1 - Producteur Binance
-node producers/binance-producer.js
-
-# Terminal 2 - Producteur Coinbase
-node producers/coinbase-producer.js
-
-# Terminal 3 - Consommateur (Traite Kafka -> MongoDB)
-node consumers/trade-consumer.js
+docker compose up -d
 ```
 
-### Étape 3 : Démarrer l'API & le Dashboard
-Ouvrez un dernier terminal pour le serveur Web :
+### 3. Initialisation du Topic Kafka
+Exécutez cette commande pour créer le topic avec ses 3 partitions et sa rétention de 24 heures :
 ```bash
-npm run server
+docker exec broker kafka-topics --bootstrap-server broker:29092 --create --if-not-exists --topic crypto.trades.raw --partitions 3 --replication-factor 1 --config retention.ms=86400000
 ```
 
-### Étape 4 : Visualiser
-* Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000).
-* Naviguez entre les onglets pour explorer les différentes paires d'actifs.
-* Laissez tourner les producteurs pour observer le graphique avancer en temps réel.
+### 4. Installation des Dépendances Node.js
+```bash
+npm install
+```
+
+### 5. Lancement de l'Application
+Lancez les producteurs et les consommateurs simultanément :
+```bash
+npm start
+```
+
+* **Pour exécuter uniquement les flux WebSockets (Ingestion)** : `npm run producers`
+* **Pour exécuter uniquement le traitement (Consommateurs)** : `npm run consumers`
+
+---
+
+## 🔗 Liens Associés & Outils
+
+* 📊 **Confluent Control Center** : [http://localhost:9021](http://localhost:9021)
+  * *Permet de surveiller la santé des brokers, inspecter le topic `crypto.trades.raw` et suivre le lag de consommation des consumer groups en temps réel.*
+* 🗄️ **MongoDB Connection URI** : `mongodb://localhost:27017/crypto_monitor`
+  * *Utilisable avec [MongoDB Compass](https://www.mongodb.com/products/tools/compass) pour observer les collections `trades`, `aggregates` et `alerts` se mettre à jour en direct.*
+* 🔌 **WebSocket Binance** : `wss://stream.binance.com:9443`
+* 🔌 **WebSocket Coinbase** : `wss://advanced-trade-ws.coinbase.com`
