@@ -20,4 +20,21 @@ async function createProducer(clientId) {
   return producer;
 }
 
-module.exports = { TOPIC, createProducer };
+/**
+ * Create and return a Kafka consumer instance (already subscribed to TOPIC).
+ */
+async function createConsumer(groupId) {
+  const k = new Kafka({
+    clientId: `consumer-${groupId}`,
+    brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+    logLevel: logLevel.WARN,
+    retry: { initialRetryTime: 300, retries: 10 },
+  });
+  const consumer = k.consumer({ groupId });
+  await consumer.connect();
+  await consumer.subscribe({ topic: TOPIC, fromBeginning: false });
+  console.log(`[Kafka] Consumer group "${groupId}" connected and subscribed to "${TOPIC}".`);
+  return consumer;
+}
+
+module.exports = { TOPIC, createProducer, createConsumer };

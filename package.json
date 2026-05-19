@@ -1,13 +1,16 @@
 {
-  "name": "crypto-market-monitor-ingestion",
+  "name": "crypto-market-monitor",
   "version": "1.0.0",
-  "description": "Real-time crypto market monitoring - Ingestion pipeline to Kafka",
+  "description": "Real-time crypto market monitoring with Kafka and MongoDB",
   "main": "ingestion/binance-producer.js",
   "scripts": {
-    "start": "concurrently \"node ingestion/binance-producer.js\" \"node ingestion/coinbase-producer.js\""
+    "producers": "concurrently \"node ingestion/binance-producer.js\" \"node ingestion/coinbase-producer.js\"",
+    "consumers": "concurrently \"node consumers/consumer1-parser.js\" \"node consumers/consumer2-aggregator.js\" \"node consumers/consumer3-anomaly.js\"",
+    "start": "concurrently \"npm run producers\" \"npm run consumers\""
   },
   "dependencies": {
     "kafkajs": "^2.2.4",
+    "mongodb": "^6.5.0",
     "ws": "^8.17.0",
     "dotenv": "^16.4.5",
     "concurrently": "^8.2.2"
