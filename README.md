@@ -90,7 +90,7 @@ docker exec broker kafka-topics --bootstrap-server broker:29092 --create --if-no
 npm install
 ```
 
-### 5. Lancement de l'Application
+### 5. Lancement de l'Application (Ingestion)
 Lancez les producteurs et les consommateurs simultanément :
 ```bash
 npm start
@@ -98,6 +98,16 @@ npm start
 
 * **Pour exécuter uniquement les flux WebSockets (Ingestion)** : `npm run producers`
 * **Pour exécuter uniquement le traitement (Consommateurs)** : `npm run consumers`
+
+### 6. Démarrage de l'API & le Dashboard
+Ouvrez un autre terminal et lancez le serveur Web :
+```bash
+npm run server
+```
+
+### 7. Visualiser
+* Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000).
+* Naviguez entre les onglets pour explorer les différentes paires d'actifs en temps réel.
 
 ---
 
