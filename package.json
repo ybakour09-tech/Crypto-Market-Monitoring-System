@@ -6,13 +6,15 @@
   "scripts": {
     "producers": "concurrently \"node ingestion/binance-producer.js\" \"node ingestion/coinbase-producer.js\"",
     "consumers": "concurrently \"node consumers/consumer1-parser.js\" \"node consumers/consumer2-aggregator.js\" \"node consumers/consumer3-anomaly.js\"",
-    "start": "concurrently \"npm run producers\" \"npm run consumers\""
+    "server": "node server.js",
+    "start": "concurrently \"npm run producers\" \"npm run consumers\" \"npm run server\""
   },
   "dependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
     "kafkajs": "^2.2.4",
     "mongodb": "^6.5.0",
-    "ws": "^8.17.0",
-    "dotenv": "^16.4.5",
-    "concurrently": "^8.2.2"
+    "ws": "^8.17.0"
   }
 }
