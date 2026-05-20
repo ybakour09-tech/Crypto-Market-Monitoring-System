@@ -79,7 +79,7 @@ services:
 
   mongodb:
     image: mongo:6.0
-    container_name: mongodb
+    container_name: mongodb_crypto
     ports:
       - "27017:27017"
     volumes:
